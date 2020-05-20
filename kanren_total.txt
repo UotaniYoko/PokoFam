@@ -1,0 +1,45 @@
+/*
+ * total related records
+ * Copyright (c) 2018 Cybozu
+ *
+ * Licensed under the MIT License
+*/
+(function() {
+    'use strict';
+
+    var events = [
+        'app.record.detail.show',
+        'app.record.edit.show'
+    ];
+    kintone.events.on(events, function(event) {
+        var clientRecordId = event.recordId;
+        var relatedAppId = kintone.app.getRelatedRecordsTargetAppId('仕切値管理- コピー');
+        var query = 'オプション用"' + client_rid +'" limit 100 offset ' + offset;
+        var outputFields = ['仕切金額_単価'];
+        var appUrl = kintone.api.url('/k/v1/records');
+
+        var params = {
+            'app': relatedAppId,
+            'query': query,
+            'fields': outputFields
+        };
+
+        var elementId = 'totalAmount';
+
+        kintone.api(appUrl, 'GET', params, function(resp) {
+            var amount = 0;
+            for (var i = 0; i < resp.records.length; i++) {
+                amount += parseFloat(resp.records[i].仕切金額_単価.value);
+            }
+
+            var divTotalAmount = document.createElement('div');
+            var wString = String(amount.toFixed(0).replace(/(\d)(?=(\d\d\d)+(?!\d))/g, '$1,'));
+            divTotalAmount.style.fontWeight = 'bold';
+            divTotalAmount.style.textAlign = 'right';
+            divTotalAmount.style.fontSize = 12;
+            divTotalAmount.innerHTML = '\\' + wString + '-';
+            kintone.app.record.getSpaceElement(elementId).appendChild(divTotalAmount);
+            return event;
+        });
+    });
+})();

@@ -1,0 +1,28 @@
+(function() {
+	'use strict';
+
+	kintone.events.on([ 'app.record.create.submit', 'app.record.edit.submit' ],
+			function(event) {
+
+
+				var data = {
+					offset : 0,
+					size : 134
+				};
+
+				kintone.api("/v1/users.json", "GET", data).then(function(resp) {
+
+					/*alert(JSON.stringify(resp));*/
+					
+					console.log(JSON.stringify(resp));
+
+				}, function(err) {
+					alert('REST APIÇ≈ÉGÉâÅ[Ç™î≠ê∂ÇµÇ‹ÇµÇΩ');
+				});
+
+
+
+				return event;
+
+			});
+})();
